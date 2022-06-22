@@ -1,0 +1,105 @@
+import random
+import numpy as np
+import networkx as nx
+import matplotlib.pyplot as plt
+import cv2
+
+#Vertices
+A = ("Rolita")
+B = ("Rock")
+C = ("Jazz")
+D = ("Romantica")
+E = ("Triste")
+F = ("Alegre")
+G = ("suena")
+
+
+#Aristas                               
+A1 = [random.randint(0,5)]
+B1 = [random.randint(0,5)]
+C1 = [random.randint(5,20)]
+D1 = [random.randint(5,20)]
+E1 = [random.randint(5,20)]
+F1 = [random.randint(5,20)]
+G1 = [random.randint(5,20)]
+H1 = [random.randint(5,20)]
+I1 = [random.randint(21,30)]
+J1 = [random.randint(21,30)]
+K1 = [random.randint(21,30)]
+
+distancias=np.array([random.randint(0, 5),random.randint(0, 5),random.randint(5, 20),
+                     random.randint(5, 20),random.randint(5, 20),random.randint(5, 20),
+                     random.randint(5, 20),random.randint(5, 20),random.randint(21, 30),
+                     random.randint(21, 30),random.randint(21, 30)])
+
+
+mapa={'Rolita':{'Rock':distancias[0],'Jazz':distancias[1]},'Rock':{'Romantica':distancias[2],'Triste':distancias[3],'Alegre':distancias[4]},
+ 'Jazz':{'Romantica':distancias[5],'Triste':distancias[6],'Alegre':distancias[7]},'Romantica':{'suena':distancias[8]},'Triste':{'suena':distancias[9]},'Alegre':{'Sonar':distancias[10]}}
+
+def dijkstra(mapa, vertice, fin):
+	distancia={}
+	avanzado={}
+	restante=mapa
+	infinito=99
+	camino=[]
+
+	for nodo in restante:
+		distancia[nodo]=infinito
+	distancia[vertice]=0
+
+	while restante:
+		nodominimo=None
+		for nodo in restante:
+			if nodominimo is None:
+				nodominimo=nodo
+			elif distancia[nodo]<distancia[nodominimo]:
+				nodominimo=nodo
+
+		for siguiente, peso in mapa[nodominimo].items():
+			if peso + distancia[nodominimo]<distancia[siguiente]:
+				distancia[siguiente]=peso+distancia[nodominimo]
+				avanzado[siguiente]=nodominimo 
+				restante.pop(nodominimo)
+				actual=fin
+
+
+	while actual!=vertice:
+		try:
+			camino.insert(0,actual)
+			actual=avanzado[actual]
+		except KeyError:
+			print("No se puede escuchar la cancion")
+			break
+	camino.insert(0,vertice)
+	if distancia[fin]!=infinito:
+		print("La distancia más corta desde "+str.upper(vertice)+" hasta " +str.upper(fin)
+        +" es " +str(distancia[fin]))
+		print("El camino más corto es: " + str(camino))
+dijkstra(mapa, "Rolita" , "Suena" )
+
+Grafo = nx.Graph()  
+
+Grafo.add_node("Rolita")
+Grafo.add_node("Rock")
+Grafo.add_node("Jazz")
+Grafo.add_node("Romantica")
+Grafo.add_node("Triste")
+Grafo.add_node("Alegre")
+Grafo.add_node("Suena")
+
+Grafo.add_edge(A,B) 
+Grafo.add_edge(A,C)
+Grafo.add_edge(B,D)
+Grafo.add_edge(B,E) 
+Grafo.add_edge(B,F)
+Grafo.add_edge(C,D)
+Grafo.add_edge(C,E) 
+Grafo.add_edge(C,F) 
+Grafo.add_edge(D,G)
+Grafo.add_edge(E,G) 
+Grafo.add_edge(F,G) 
+
+
+fig, ax = plt.subplots()
+nx.draw(Grafo, ax=ax, with_labels=True, )
+plt.show()
